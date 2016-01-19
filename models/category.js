@@ -32,11 +32,23 @@ CategorySchema.statics = {
 		return this
 			.find({})
 			.sort('meta.updateAt')
+			.select('name notes')
 			.exec(cb)
 	},
 	findById: function(id, cb) {
 		return this
 			.findOne({_id: id})
+			.select('name notes')
+			.exec(cb)
+	},
+	updateById: function(id, update, cb) {
+		return this
+			.findByIdAndUpdate(id, update)
+			.exec(cb)
+	},
+	removeById: function(id, cb) {
+		return this
+			.findByIdAndRemove(id)
 			.exec(cb)
 	}
 }

@@ -7,9 +7,36 @@ var NoteSchema = new Schema({
 	url: String,
 	content: String,
 	note: String,
-	categorys:[{ type: ObjectId, ref: 'Category' }],
+	categories:[{ type: ObjectId, ref: 'Category' }],
 	updated_at: { type: Date, default: Date.now },
 })
+
+
+NoteSchema.statics = {
+	fetch: function(cb) {
+		return this
+			.find({})
+			.select('-__v')
+			.exec(cb)
+	},
+	findById: function(id, cb) {
+		return this
+			.findOne({_id: id})
+			.select('-__v')
+			.exec(cb)
+	},
+	updateById: function(id, update, cb) {
+		return this
+			.findByIdAndUpdate(id, update)
+			.exec(cb)
+	},
+	removeById: function(id, cb) {
+		return this
+			.findByIdAndRemove(id)
+			.exec(cb)
+	}
+}
+
 
 module.exports = mongoose.model('Note', NoteSchema)
 
