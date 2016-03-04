@@ -14,7 +14,7 @@ var CategorySchema = new Schema({
 			type: Date,
 			default: Date.now()
 		}
-	},
+	}
 })
 
 CategorySchema.pre('save', function(next) {

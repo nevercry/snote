@@ -8,7 +8,16 @@ var NoteSchema = new Schema({
 	content: String,
 	note: String,
 	categories:[{ type: ObjectId, ref: 'Category' }],
-	updated_at: { type: Date, default: Date.now },
+	meta: {
+		createAt: {
+			type: Date,
+			default: Date.now()
+		},
+		updateAt: {
+			type: Date,
+			default: Date.now()
+		}
+	}
 })
 
 
