@@ -1,6 +1,6 @@
 {
   "name": "snote",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -20,5 +20,20 @@
     "grunt-concurrent": "^2.2.1",
     "grunt-contrib-nodemon": "^0.5.2",
     "grunt-contrib-watch": "^0.6.1"
-  }
+  },
+  "description": "small note",
+  "main": "./bin/www",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nevercry/snote.git"
+  },
+  "keywords": [
+    "snote"
+  ],
+  "author": "ysfnevercry@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nevercry/snote/issues"
+  },
+  "homepage": "https://github.com/nevercry/snote#readme"
 }

@@ -1,0 +1,25 @@
+{
+  "name": "snote",
+  "description": "small note",
+  "main": "",
+  "authors": [
+    "yang <ysfnevercry@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "snote"
+  ],
+  "homepage": "https://github.com/nevercry/snote",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}
