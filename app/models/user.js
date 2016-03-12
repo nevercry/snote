@@ -13,6 +13,17 @@ var UserSchema = new Schema({
 		unique: true,
 		type: String
 	},
+	// 0: normal user
+	// 1: verified user
+	// 2: professional user
+	// 3: 待定
+
+	// >10: admin
+	// >50: super admin
+	role: {
+		type: Number,
+		default: 0
+	},
 	email: {
 		unique: true,
 		type: String
@@ -58,6 +69,16 @@ UserSchema.pre('save', function(next) {
 		});
 	});
 });
+
+UserSchema.methods = {
+	comparePassword: function(_password, cb) {
+		bcrypt.compare(_password, this.password, function(err, isMatch) {
+			if (err) return cb(err)
+
+			cb(null, isMatch)
+		})
+	}
+}
 
 
 UserSchema.statics = {
