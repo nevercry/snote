@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 var mongoose = require('mongoose')
-var Category = require('../../models/category.js')
+var Category = require('../../app/models/category.js');
 
 /* GET /categories listing. */
 router.get('/', function(req, res, next) {

@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router()
 
 var mongoose = require('mongoose')
-var Note = require('../../models/note.js')
+var Note = require('../../app/models/note.js');
 
 /* GET /notes listing. */
 router.get('/', function(req, res, next) {

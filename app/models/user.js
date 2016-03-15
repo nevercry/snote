@@ -3,6 +3,11 @@ var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId
 var bcrypt = require('bcrypt')
 var SALT_WORK_FACTOR = 10
+var jwt = require('jsonwebtoken')
+/*
+	JWT 的密码
+ */
+var JWT_SECRET = 'SNOTE_SECRET' // JWT Secret 
 
 var UserSchema = new Schema({
 	name: {
@@ -10,24 +15,19 @@ var UserSchema = new Schema({
 		type: String
 	},
 	password: {
-		unique: true,
 		type: String
 	},
-	// 0: normal user
-	// 1: verified user
-	// 2: professional user
-	// 3: 待定
-
-	// >10: admin
-	// >50: super admin
+	/*
+		User  普通用户
+		Admin 管理员
+	 */
 	role: {
-		type: Number,
-		default: 0
+		type: String,
+		default: 'User'
 	},
-	email: {
-		unique: true,
-		type: String
-	},
+	email: String,
+	mobile: String,
+	verify_code: Number,
 	token: {
 		unique: true,
 		type: String
@@ -50,9 +50,18 @@ UserSchema.pre('save', function(next) {
 
 	if (this.isNew) {
 		this.meta.createAt = this.meta.update = Date.now();
+		// 生成token
+		// 如果用户选择手机号注册，用户名为手机号 + '_user';
+		
+		if (!this.name) {
+			this.name = this.mobile + '_user';
+		}
+
+		this.token = jwt.sign({"name":this.name,"rolo":this.role},JWT_SECRET);
 	} else {
 		this.meta.updateAt = Date.now();
 	}
+
 
 	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 		if (err) {
@@ -68,15 +77,21 @@ UserSchema.pre('save', function(next) {
 			next()
 		});
 	});
+
 });
 
 UserSchema.methods = {
 	comparePassword: function(_password, cb) {
 		bcrypt.compare(_password, this.password, function(err, isMatch) {
-			if (err) return cb(err)
+			if (err) {
+				return cb(err)
+			}
 
 			cb(null, isMatch)
 		})
+	},
+	compareVerifyCode:function(_verifyCode) {
+		return _verifyCode === this.verify_code
 	}
 }
 

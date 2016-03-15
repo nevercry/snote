@@ -7,7 +7,7 @@ block content
         thead
           tr
             th 名字
-            //- th 时间
+            th 时间
             th 查看
             th 修改
             th 删除
@@ -15,7 +15,7 @@ block content
           each item in users
             tr(class="item-id-#{item.name}")
               td #{item.name}
-              //- td #{moment(item.meta.updateAt).format('MM/DD/YYYY')}
+              td #{moment(item.meta.updateAt).format('MM/DD/YYYY')}
               td 查看
               td 修改
               td

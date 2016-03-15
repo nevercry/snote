@@ -1,5 +1,6 @@
 var Index = require('../app/controllers/index')
 var User = require('../app/controllers/user')
+var api_routes = require('../api/routes')
 // var Category = require('../app/controllers/category')
 // var multer = require('multer')
 // var path = require('path')
@@ -28,6 +29,9 @@ module.exports = function(app) {
 		next()
 	})
 
+	// API Routers
+	app.use('/api/v1',api_routes);
+
 	// index 
 	app.get('/', Index.index)
 
@@ -37,7 +41,7 @@ module.exports = function(app) {
 	app.get('/login', User.showLogin)
 	app.get('/signup', User.showSignup)
 	app.get('/logout', User.logout)
-	// app.get('/admin/user/list', User.loginRequired, User.adminRequired, User.list)
+	app.get('/admin/user/list', User.loginRequired, User.adminRequired, User.list)
 
 	// // Movie
 	// app.get('/movie/:id', Movie.detail)
