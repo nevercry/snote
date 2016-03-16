@@ -18,14 +18,14 @@ var Verify_codeSchema = new Schema({
 
 
 Verify_codeSchema.statics = {
-	findByCode: function(code, cb) {
+	findByMobile: function(mobile, cb) {
 		return this
-			.findOne({code: code})
+			.findOne({mobile: mobile})
 			.exec(cb)
 	},
-	removeByCode: function(code, cb) {
+	removeByMobile: function(mobile, cb) {
 		return this
-			.findOneAndRemove(code)
+			.findOneAndRemove(mobile)
 			.exec(cb)
 	}
 }

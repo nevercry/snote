@@ -27,7 +27,6 @@ var UserSchema = new Schema({
 	},
 	email: String,
 	mobile: String,
-	verify_code: Number,
 	token: {
 		unique: true,
 		type: String
@@ -62,26 +61,33 @@ UserSchema.pre('save', function(next) {
 		this.meta.updateAt = Date.now();
 	}
 
-
-	bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
-		if (err) {
-			next(err)
-		}
-
-		bcrypt.hash(user.password, salt, function(err, hash) {
+	if (this.password) {
+		bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 			if (err) {
 				next(err)
 			}
 
-			user.password = hash
-			next()
-		});
-	});
+			bcrypt.hash(user.password, salt, function(err, hash) {
+				if (err) {
+					next(err)
+				}
 
+				user.password = hash
+				next()
+			});
+		});
+	} 
+
+	next();
 });
 
 UserSchema.methods = {
 	comparePassword: function(_password, cb) {
+		// 解决用户使用手机验证码登录，密码没有设置的情况
+		if (!_password) {
+			return cb(null, false)
+		}
+
 		bcrypt.compare(_password, this.password, function(err, isMatch) {
 			if (err) {
 				return cb(err)
