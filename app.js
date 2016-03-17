@@ -6,11 +6,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoStore = require('connect-mongo')(session);
+var config = require('./app/config'); // 应用配置文件
 
 var app = express();
 var fs = require('fs');
 // 数据库地址
-var dbUrl = 'mongodb://localhost/snote'
+var dbUrl = config.database
 var mongoose = require('mongoose');
 mongoose.connect(dbUrl, function(err) {
   if (err) {

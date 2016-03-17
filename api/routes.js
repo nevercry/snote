@@ -9,10 +9,10 @@ var categories = require('./v1/categories');
 router.use('/user', user);
 
 // 笔记相关
-router.use('/notes', notes);
+router.use('/notes', user.auth, notes);
 
 // 分类相关
-router.use('/categories', categories);
+router.use('/categories', user.auth, categories);
 
 
 module.exports = router;

@@ -4,10 +4,11 @@ var ObjectId = Schema.Types.ObjectId
 var bcrypt = require('bcrypt')
 var SALT_WORK_FACTOR = 10
 var jwt = require('jsonwebtoken')
+var config = require('../config')
 /*
 	JWT 的密码
  */
-var JWT_SECRET = 'SNOTE_SECRET' // JWT Secret 
+var JWT_SECRET = config.secret // JWT Secret 
 
 var UserSchema = new Schema({
 	name: {
@@ -25,7 +26,10 @@ var UserSchema = new Schema({
 		type: String,
 		default: 'User'
 	},
-	email: String,
+	email: {
+		unique:false,
+		type: String
+	},
 	mobile: String,
 	token: {
 		unique: true,
@@ -84,7 +88,7 @@ UserSchema.pre('save', function(next) {
 UserSchema.methods = {
 	comparePassword: function(_password, cb) {
 		// 解决用户使用手机验证码登录，密码没有设置的情况
-		if (!_password) {
+		if (!this.password) {
 			return cb(null, false)
 		}
 
