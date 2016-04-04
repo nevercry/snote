@@ -4,6 +4,7 @@ var router = express.Router()
 var mongoose = require('mongoose')
 var Category = require('../../app/models/category.js');
 
+// 获得某用户的分类列表
 /* GET /categories listing. */
 router.get('/', function(req, res, next) {
   var userId = req.decoded["userId"]
@@ -31,6 +32,7 @@ router.post('/', function(req, res, next) {
 
   var error = new Error()
   error.status = 400
+
   if (!category_name) {
     error.message = '缺少name参数'
     return next(error)
@@ -51,18 +53,43 @@ router.post('/', function(req, res, next) {
   })
 })
 
+// 获得某条分类的详细
 /* GET /categories/:id */
 router.get('/:id', function(req, res, next) {
   Category.findById(req.params.id, function (err, category) {
-  	if (err) return next(err)
+  	if (err) {
+      err.status = 400
+      err.message = '查找数据库出错'
+      return next(err)
+    }
   	res.json(category)
   })
 })
 
 /* PUT /categories/:id */
 router.put('/:id', function(req, res, next) {
-  Category.updateById(req.params.id, req.body, function (err, category) {
-  	if (err) return next(err)
+  /*
+    "name":"Dev"
+   */
+  var tmpCat = req.body
+  var categoryId = req.params.id 
+  var cat_name = tmpCat["name"]
+
+  var error = new Error()
+  error.status = 400
+  if (!cat_name) {
+    error.message = '缺少name参数'
+    return next(error)
+  }
+
+  var newCat["name"] = cat_name
+
+  Category.updateById(categoryId, newCat, function (err, category) {
+  	if (err) {
+      err.status = 400
+      err.message = '数据库更新出错'
+      return next(err)
+    }
   	res.json({message: '更新成功', catId: category._id})
   })
 })
