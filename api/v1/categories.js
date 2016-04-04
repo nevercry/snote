@@ -6,17 +6,48 @@ var Category = require('../../app/models/category.js');
 
 /* GET /categories listing. */
 router.get('/', function(req, res, next) {
-  Category.fetch(function(err, categories) {
-  	if (err) return next(err)
+  var userId = req.decoded["userId"]
+
+  Category.fetchByUserId(userId, function(err, categories) {
+  	if (err) {
+      err.status = 400
+      err.message = '查找数据库出错'
+      return next(err)
+    }
   	res.json(categories)
   })
 })
 
 /* POST /categories  */
+// 创建分类
 router.post('/', function(req, res, next) {
-  Category.create(req.body, function (err, category) {
-  	if (err) return next(err)
-  	res.json({catId: category._id, name: category.name})
+  /*
+    "name":"Dev"
+   */
+  var tmpCategory = req.body
+  // 检查参数是否正确
+  var category_name = tmpCategory["name"]
+  var userId = req.decoded["userId"]
+
+  var error = new Error()
+  error.status = 400
+  if (!category_name) {
+    error.message = '缺少name参数'
+    return next(error)
+  }
+
+  var category = new Category({
+    name: category_name,
+    user: userId
+  })
+
+  category.save(function(err, category) {
+    if (err) {
+      error.message = '数据库保存category出错'
+      return next(error)
+    }
+
+    res.json({catId: category._id, name: category_name})
   })
 })
 
@@ -39,7 +70,11 @@ router.put('/:id', function(req, res, next) {
 /* DELETE /categorys/:id */
 router.delete('/:id', function(req, res, next) {
   Category.removeById(req.params.id, function (err, category) {
-  	if (err) return next(err)
+  	if (err) {
+      err.status = 400
+      err.message = '数据库删除出错'
+      return next(err)
+    }
   	res.json({message: '删除成功', catId: category._id})
   })
 })

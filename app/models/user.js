@@ -35,7 +35,6 @@ var UserSchema = new Schema({
 		unique: true,
 		type: String
 	},
-	notes: [{ type: ObjectId, ref: 'Note'}],
 	meta: {
 		createAt: {
 			type: Date,
@@ -49,8 +48,7 @@ var UserSchema = new Schema({
 })
 
 UserSchema.pre('save', function(next) {
-	var user = this
-
+	var user = this;
 	if (this.isNew) {
 		this.meta.createAt = this.meta.update = Date.now();
 		// 生成token
@@ -60,15 +58,16 @@ UserSchema.pre('save', function(next) {
 			this.name = this.mobile + '_user';
 		}
 
-		this.token = jwt.sign({"name":this.name,"rolo":this.role},JWT_SECRET);
+		//console.log("userId is " + this._id);
+		this.token = jwt.sign({"name":this.name,"rolo":this.role,"userId":this._id},JWT_SECRET);
 	} else {
 		this.meta.updateAt = Date.now();
 	}
 
-	if (this.password) {
+	if (user.password) {
 		bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
 			if (err) {
-				next(err)
+				next(err);
 			}
 
 			bcrypt.hash(user.password, salt, function(err, hash) {
@@ -76,13 +75,16 @@ UserSchema.pre('save', function(next) {
 					next(err)
 				}
 
-				user.password = hash
-				next()
+				user.password = hash;
+				console.log('password is' + user.password);
+				next();
 			});
 		});
-	} 
+	} else {
+		next();
+	} 	
 
-	next();
+	
 });
 
 UserSchema.methods = {

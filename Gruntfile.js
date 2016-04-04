@@ -16,16 +16,14 @@ module.exports = function (grunt) {
 				}
 			},
 		},
-
 		nodemon: {
 			dev: {
 				options: {
-					file: 'app.js',
-					args: [],
+					files:'app.js',
+					nodeArgs: ['--debug'],
 					ignoredFiles: ['README.md', 'node_modules/**', '.DS_Store'],
 					watchedExtensions: ['js'],
 					watchedFolders: ['./'],
-					debug: true,
 					delayTime: 1,
 					env: {
 						PORT: 3000
@@ -36,16 +34,21 @@ module.exports = function (grunt) {
 		},
 
 		concurrent: {
-			tasks: ['nodemon', 'watch'],
+			tasks: ['nodemon', 'watch','node-inspector'],
 			options: {
 				logConcurrentOutput: true
 			}
-		} 
+		},
+		'node-inspector': {
+      debug: {}
+    }
 	});
 	
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-nodemon');
+	grunt.loadNpmTasks('grunt-node-inspector');
 	grunt.loadNpmTasks('grunt-concurrent');
+	
 
 	grunt.option('force', true);
 	grunt.registerTask('default', ['concurrent']);

@@ -14,6 +14,10 @@ var CategorySchema = new Schema({
 			type: Date,
 			default: Date.now()
 		}
+	},
+	user: {
+		type: ObjectId,
+		ref: 'User'
 	}
 })
 
@@ -28,9 +32,9 @@ CategorySchema.pre('save', function(next) {
 })
 
 CategorySchema.statics = {
-	fetch: function(cb) {
+	fetchByUserId: function(userId, cb) {
 		return this
-			.find({})
+			.find({user: userId})
 			.sort('meta.updateAt')
 			.select('name notes')
 			.exec(cb)

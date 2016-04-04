@@ -7,7 +7,14 @@ var NoteSchema = new Schema({
 	url: String,
 	content: String,
 	note: String,
-	categories:[{ type: ObjectId, ref: 'Category' }],
+	category:{ 
+		type: ObjectId, 
+		ref: 'Category',
+		set: function(categoryId) {
+			this._previousCategoryId = this.category
+			return categoryId
+		}
+	},
 	meta: {
 		createAt: {
 			type: Date,
@@ -17,14 +24,19 @@ var NoteSchema = new Schema({
 			type: Date,
 			default: Date.now()
 		}
+	},
+	user: {
+		type: ObjectId,
+		ref: 'User'
 	}
 })
 
 
 NoteSchema.statics = {
-	fetch: function(cb) {
+	fetchByUserId: function(userId,cb) {
 		return this
-			.find({})
+			.find({user: userId})
+			.populate('user', 'name')
 			.select('-__v')
 			.exec(cb)
 	},

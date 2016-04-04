@@ -76,6 +76,17 @@ app.use(function(req, res, next) {
 });
 
 // error handlers
+function clientErrorHandler(err, req, res, next) {
+  if (req.decoded) {
+    res.status(err.status || 500)
+    res.send({ message: err.message });
+  } else {
+    next(err);
+  }
+}
+
+app.use(clientErrorHandler);
+
 
 // development error handler
 // will print stacktrace
