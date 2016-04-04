@@ -43,8 +43,7 @@ router.auth = function(req, res, next) {
     // return an error
     return res.status(403).send({ 
         'message': 'No token provided.' 
-    });
-    
+    });    
   }
 }
 

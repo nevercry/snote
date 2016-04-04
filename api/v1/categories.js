@@ -2,7 +2,8 @@ var express = require('express')
 var router = express.Router()
 
 var mongoose = require('mongoose')
-var Category = require('../../app/models/category.js');
+var Category = require('../../app/models/category.js')
+var Note = require('../../app/models/note.js')
 
 // 获得某用户的分类列表
 /* GET /categories listing. */
@@ -66,6 +67,7 @@ router.get('/:id', function(req, res, next) {
   })
 })
 
+// 更新某条分类
 /* PUT /categories/:id */
 router.put('/:id', function(req, res, next) {
   /*
@@ -82,7 +84,8 @@ router.put('/:id', function(req, res, next) {
     return next(error)
   }
 
-  var newCat["name"] = cat_name
+  var newCat = {}
+  newCat["name"] = cat_name
 
   Category.updateById(categoryId, newCat, function (err, category) {
   	if (err) {
@@ -94,15 +97,27 @@ router.put('/:id', function(req, res, next) {
   })
 })
 
+// 删除分类
 /* DELETE /categorys/:id */
 router.delete('/:id', function(req, res, next) {
+  /*
+    删除分类时，顺带删除分类下的所有笔记，注意提醒用户数据丢失的后果
+   */
   Category.removeById(req.params.id, function (err, category) {
   	if (err) {
       err.status = 400
       err.message = '数据库删除出错'
       return next(err)
     }
-  	res.json({message: '删除成功', catId: category._id})
+
+    Note.remove({category:category._id}, function(err) {
+      if (err) {
+        err.status = 400
+        err.message = '数据库删除出错'
+        return next(err)
+      }
+      res.json({message: '删除成功', catId: category._id})
+    })
   })
 })
 

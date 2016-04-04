@@ -220,16 +220,34 @@ router.put('/:id', function(req, res, next) {
   })
 })
 
-
+// 删除某条笔记
 /* DELETE /notes/:id */
 router.delete('/:id', function(req, res, next) {
+  /*
+    删除笔记时要顺带清楚跟笔记相关的分类中的笔记信息
+   */
   Note.removeById(req.params.id, function (err, note) {
   	if (err) {
       err.status = 400
       err.message = '数据库删除出错'
       return next(err)
     }
-  	res.json({message: '删除成功', noteId: note._id})
+    Category.findById(note.category, function (err, category){
+      if (err) {
+        err.status = 400
+        err.message = '数据库查找出错'
+        return next(err)
+      }
+      category.notes.pull(note._id)
+      category.save(function(err){
+        if (err) {
+          err.status = 400
+          err.message = '数据库保存出错'
+          return next(err)
+        }
+        res.json({message: '删除成功', noteId: note._id})
+      })
+    })
   })
 })
 
